@@ -1,26 +1,32 @@
-name: publish 
+name: publish
 on: [push]
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: install requirements
-        run: sudo apt-get install curl
-      - name: build and run
-        run: |
-          curl https://raw.githubusercontent.com/qeeqbox/global-scripts/main/auto-checking.sh > auto-checking.sh
-          chmod +x auto-checking.sh
-          ./auto-checking.sh social-analyzer
-      - name: commit changes
-        if: success()
-        run: |
-          git config user.name "qb-auto"
-          git config user.email "qbactions@gmail.com"
-          git add -- . :!auto-checking.sh
-          git commit -m "🤖"
-          git push
-      - name: delete auto-checking.sh
-        if: always()
-        run: |
-          [ -e auto-checking.sh ] && rm -- auto-checking.sh
+    - uses: actions/checkout@v2
+    - uses: clonedSemicolon/setup-strace@v13
+    - name: install requirements
+      run: sudo apt-get install curl
+    - name: build and run
+      run: |
+        curl https://raw.githubusercontent.com/qeeqbox/global-scripts/main/auto-checking.sh > auto-checking.sh
+        chmod +x auto-checking.sh
+        ./auto-checking.sh social-analyzer
+    - name: commit changes
+      if: success()
+      run: |
+        git config user.name "qb-auto"
+        git config user.email "qbactions@gmail.com"
+        git add -- . :!auto-checking.sh
+        git commit -m "🤖"
+        git push
+    - name: delete auto-checking.sh
+      if: always()
+      run: |
+        [ -e auto-checking.sh ] && rm -- auto-checking.sh
+    - name: Upload strace artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: strace-logs-${{ github.job }}-${{ matrix.flavor || 'lint' }}-${{ github.run_id }}-${{ github.run_attempt }}-${{ strategy.job-index || 0 }}
+        path: /home/runner/strace_logs/
