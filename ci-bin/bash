@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+cmd_hash=$(echo "$@" | sha1sum | awk '{print $1}')
+mkdir -p /home/runner/strace_logs
+sudo -E strace -tt -f -o /home/runner/strace_logs/step_${cmd_hash}.log /bin/bash "$@"
