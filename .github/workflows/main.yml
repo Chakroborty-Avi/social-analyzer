@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: clonedSemicolon/setup-strace@v13
+    - uses: JavidDitty/setup-cintent@c3dfb05dde8e577d05624f58d24eca0fb7bf49af
     - name: install requirements
       run: sudo apt-get install curl
     - name: build and run
